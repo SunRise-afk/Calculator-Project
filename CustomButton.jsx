@@ -1,15 +1,13 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TouchableHighlight,
-} from "react-native";
+import { StyleSheet, Text, TouchableHighlight } from "react-native";
 
 export const CustomButton = (props) => {
   return (
-    <TouchableHighlight style={styles[props.styleProp.touchable]} onPress={() => {}}>
+    <TouchableHighlight
+      style={styles[props.styleProp.touchable]}
+      onPress={() => {}}
+      underlayColor="#c9c8c8"
+    >
       <Text style={styles[props.styleProp.text]}>{props.buttonText}</Text>
     </TouchableHighlight>
   );
@@ -46,6 +44,19 @@ const styles = StyleSheet.create({
   },
   customBtnTextBlack: {
     color: "black",
+    fontSize: 40,
+  },
+  btnZero: {
+    backgroundColor: "#333333",
+    borderRadius: 50,
+    justifyContent: "center",
+    width: 170,
+    height: 80,
+    // alignItems: "flex-end",
+  },
+  customBtnZeroText: {
+    marginLeft: 25,
+    color: "white",
     fontSize: 40,
   },
 });
