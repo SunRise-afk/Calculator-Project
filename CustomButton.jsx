@@ -5,7 +5,7 @@ export const CustomButton = (props) => {
   return (
     <TouchableHighlight
       style={styles[props.styleProp.touchable]}
-      onPress={() => {}}
+      onPress={() => {props.onPressHandler(...props.buttonArgOnPress)}}
       underlayColor="#c9c8c8"
     >
       <Text style={styles[props.styleProp.text]}>{props.buttonText}</Text>
@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 170,
     height: 80,
-    // alignItems: "flex-end",
   },
   customBtnZeroText: {
     marginLeft: 25,
