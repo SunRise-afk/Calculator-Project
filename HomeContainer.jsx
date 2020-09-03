@@ -424,6 +424,63 @@ export const HomeContainer = () => {
   const onPressCalculateHandler = () => {
     calculate();
   };
+
+  const onPressMCBtn = () => {
+    setMemoryState({
+      memoryVal: "0",
+      hasMemoryVal: false,
+      displayMemoryVal: false,
+    });
+  }
+
+  const onPressMRBtn = () => {
+    onPressNumberHandler(
+      memoryState.memoryVal,
+      operationTemp.operationActive,
+      true
+    );
+    setMemoryState({
+      memoryVal: memoryState.memoryVal,
+      hasMemoryVal: memoryState.hasMemoryVal,
+      displayMemoryVal: true,
+    });
+  }
+
+  const onPressMPlusBtn = () => {
+    if (operationTemp.haveResult) {
+      setMemoryState({
+        memoryVal:
+          Number(memoryState.memoryVal) + Number(temp.secondOperand),
+        hasMemoryVal: true,
+        displayMemoryVal: memoryState.displayMemoryVal,
+      });
+    } else {
+      setMemoryState({
+        memoryVal:
+          Number(memoryState.memoryVal) + Number(temp.firstOperand),
+        hasMemoryVal: true,
+        displayMemoryVal: memoryState.displayMemoryVal,
+      });
+    }
+  }
+
+  const onPressMMinusBtn = () => {
+    if (operationTemp.haveResult) {
+      setMemoryState({
+        memoryVal:
+          Number(memoryState.memoryVal) - Number(temp.secondOperand),
+        hasMemoryVal: true,
+        displayMemoryVal: memoryState.displayMemoryVal,
+      });
+    } else {
+      setMemoryState({
+        memoryVal:
+          Number(memoryState.memoryVal) - Number(temp.firstOperand),
+        hasMemoryVal: true,
+        displayMemoryVal: memoryState.displayMemoryVal,
+      });
+    }
+  }
   console.log(temp, operationTemp, terminationTemp, calculationState);
   return (
     <View style={styles.container}>
@@ -465,18 +522,26 @@ export const HomeContainer = () => {
         <CustomButton
           buttonText="mc"
           styleProp={{ touchable: "btnGreyBg", text: "customBtnTextWhite" }}
+          onPressHandler={onPressMCBtn}
+          buttonArgOnPress={["0"]}
         ></CustomButton>
         <CustomButton
           buttonText="mr"
-          styleProp={{ touchable: "btnGreyBg", text: "customBtnTextWhite" }}
+          styleProp={memoryState.hasMemoryVal ? { touchable: "btnActiveMr", text: "customBtnTextActiveMr" } : { touchable: "btnGreyBg", text: "customBtnTextWhite" }}
+          onPressHandler={onPressMRBtn}
+          buttonArgOnPress={["0"]}
         ></CustomButton>
         <CustomButton
           buttonText="m-"
           styleProp={{ touchable: "btnGreyBg", text: "customBtnTextWhite" }}
+          onPressHandler={onPressMMinusBtn}
+          buttonArgOnPress={["0"]}
         ></CustomButton>
         <CustomButton
           buttonText="m+"
           styleProp={{ touchable: "btnOrangeBg", text: "customBtnTextWhite" }}
+          onPressHandler={onPressMPlusBtn}
+          buttonArgOnPress={["0"]}
         ></CustomButton>
       </View>
       <View style={styles.firstRow}>

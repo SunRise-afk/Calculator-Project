@@ -53,6 +53,18 @@ const styles = StyleSheet.create({
     width: 170,
     height: 80,
   },
+  btnActiveMr:{
+    backgroundColor: "#939393",
+    borderRadius: 50,
+    justifyContent: "center",
+    width: 80,
+    height: 80,
+    alignItems: "center",
+  },
+  customBtnTextActiveMr:{
+    color: "black",
+    fontSize: 40,
+  },
   customBtnZeroText: {
     marginLeft: 25,
     color: "white",
