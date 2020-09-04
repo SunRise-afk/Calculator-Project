@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { CustomButton } from "./CustomButton";
+import { CalculationBar } from "./CalculationBar";
 
 export const HomeContainer = () => {
   const [temp, settemp] = useState({ firstOperand: "0", secondOperand: "0" });
@@ -224,90 +225,117 @@ export const HomeContainer = () => {
         displayMemoryVal: false,
       });
     } else {
-      setTerminationTemp({ terminationStatus: 1 });
-      if (!operationStatus) {
-        if (temp.firstOperand === "0") {
-          if (operand === ".") {
-            if (!temp.firstOperand.includes(".")) {
-              settemp({
-                firstOperand: "0" + operand,
-                secondOperand: temp.secondOperand,
-              });
-            }
-          } else {
-            console.log("go here");
-            settemp({
-              firstOperand: operand,
-              secondOperand: temp.secondOperand,
-            });
-          }
-        } else {
-          if (calculationState.updated) {
-            if (operand === ".") {
-              settemp({
-                firstOperand: "0" + operand,
-                secondOperand: temp.secondOperand,
-              });
-            } else {
-              settemp({
-                firstOperand: operand,
-                secondOperand: temp.secondOperand,
-              });
-            }
-            setCalculationState({
-              previousOperation: calculationState.previousOperation,
-              previousOperand: calculationState.previousOperand,
-              updated: false,
-            });
-          } else {
+      if (
+        (Number(temp.secondOperand) != 0 &&
+          operationTemp.haveResult &&
+          (Number(temp.secondOperand) > 1e8 ||
+            (Number(temp.secondOperand) < 1 &&
+              temp.secondOperand.length > 9))) ||
+        (Number(temp.firstOperand) != 0 &&
+          !calculationState.updated &&
+          !operationTemp.operationActive &&
+          !operationTemp.haveResult &&
+          (Number(temp.firstOperand) > 1e8 ||
+            (Number(temp.firstOperand) < 1 && temp.firstOperand.length > 9)))
+      ) {
+        console.log(
+          temp.firstOperand,
+          temp.secondOperand,
+          Number(temp.firstOperand) != 0,
+          Number(temp.firstOperand) < 1e-8,
+          temp.firstOperand.length > 9
+        );
+      } else {
+        setTerminationTemp({ terminationStatus: 1 });
+        if (!operationStatus) {
+          if (temp.firstOperand === "0" || temp.firstOperand === "-0") {
             if (operand === ".") {
               if (!temp.firstOperand.includes(".")) {
                 settemp({
-                  firstOperand: temp.firstOperand + operand,
+                  firstOperand:
+                    temp.firstOperand === "0" ? "0" + operand : "-0" + operand,
                   secondOperand: temp.secondOperand,
                 });
               }
             } else {
               settemp({
-                firstOperand: temp.firstOperand + operand,
+                firstOperand:
+                  temp.firstOperand === "0" ? operand : "-" + operand,
                 secondOperand: temp.secondOperand,
               });
             }
+          } else {
+            if (calculationState.updated) {
+              if (operand === ".") {
+                settemp({
+                  firstOperand: "0" + operand,
+                  secondOperand: temp.secondOperand,
+                });
+              } else {
+                settemp({
+                  firstOperand: operand,
+                  secondOperand: temp.secondOperand,
+                });
+              }
+              setCalculationState({
+                previousOperation: calculationState.previousOperation,
+                previousOperand: calculationState.previousOperand,
+                updated: false,
+              });
+            } else {
+              if (operand === ".") {
+                if (!temp.firstOperand.includes(".")) {
+                  settemp({
+                    firstOperand: temp.firstOperand + operand,
+                    secondOperand: temp.secondOperand,
+                  });
+                }
+              } else {
+                settemp({
+                  firstOperand: temp.firstOperand + operand,
+                  secondOperand: temp.secondOperand,
+                });
+              }
+            }
           }
-        }
-      } else {
-        setOperationTemp({
-          operation: operationTemp.operation,
-          operationActive: operationTemp.operationActive,
-          haveResult: true,
-        });
-        if (temp.secondOperand === "0") {
-          if (operand === ".") {
-            if (!temp.secondOperand.includes(".")) {
+        } else {
+          setOperationTemp({
+            operation: operationTemp.operation,
+            operationActive: operationTemp.operationActive,
+            haveResult: true,
+          });
+          if (temp.secondOperand === "0" || temp.secondOperand === "-0") {
+            if (operand === ".") {
+              if (!temp.secondOperand.includes(".")) {
+                settemp({
+                  firstOperand: temp.firstOperand,
+                  secondOperand: (temp.secondOperand = "0"
+                    ? "0" + operand
+                    : "-0" + operand),
+                });
+              }
+            } else {
+              console.log(temp.secondOperand);
               settemp({
                 firstOperand: temp.firstOperand,
-                secondOperand: "0" + operand,
+                secondOperand:
+                  temp.secondOperand === "0" ? operand : `-${operand}`,
               });
             }
           } else {
-            settemp({
-              firstOperand: temp.firstOperand,
-              secondOperand: operand,
-            });
-          }
-        } else {
-          if (operand === ".") {
-            if (!temp.secondOperand.includes(".")) {
+            if (operand === ".") {
+              if (!temp.secondOperand.includes(".")) {
+                settemp({
+                  firstOperand: temp.firstOperand,
+                  secondOperand: temp.secondOperand + operand,
+                });
+              }
+            } else {
               settemp({
                 firstOperand: temp.firstOperand,
                 secondOperand: temp.secondOperand + operand,
               });
             }
-          } else {
-            settemp({
-              firstOperand: temp.firstOperand,
-              secondOperand: temp.secondOperand + operand,
-            });
           }
         }
       }
@@ -431,7 +459,7 @@ export const HomeContainer = () => {
       hasMemoryVal: false,
       displayMemoryVal: false,
     });
-  }
+  };
 
   const onPressMRBtn = () => {
     onPressNumberHandler(
@@ -444,53 +472,61 @@ export const HomeContainer = () => {
       hasMemoryVal: memoryState.hasMemoryVal,
       displayMemoryVal: true,
     });
-  }
+  };
 
   const onPressMPlusBtn = () => {
     if (operationTemp.haveResult) {
       setMemoryState({
-        memoryVal:
-          Number(memoryState.memoryVal) + Number(temp.secondOperand),
+        memoryVal: String(
+          Number(memoryState.memoryVal) + Number(temp.secondOperand)
+        ),
         hasMemoryVal: true,
         displayMemoryVal: memoryState.displayMemoryVal,
       });
     } else {
       setMemoryState({
-        memoryVal:
-          Number(memoryState.memoryVal) + Number(temp.firstOperand),
+        memoryVal: String(
+          Number(memoryState.memoryVal) + Number(temp.firstOperand)
+        ),
         hasMemoryVal: true,
         displayMemoryVal: memoryState.displayMemoryVal,
       });
     }
-  }
+  };
 
   const onPressMMinusBtn = () => {
     if (operationTemp.haveResult) {
       setMemoryState({
-        memoryVal:
-          Number(memoryState.memoryVal) - Number(temp.secondOperand),
+        memoryVal: Number(memoryState.memoryVal) - Number(temp.secondOperand),
         hasMemoryVal: true,
         displayMemoryVal: memoryState.displayMemoryVal,
       });
     } else {
       setMemoryState({
-        memoryVal:
-          Number(memoryState.memoryVal) - Number(temp.firstOperand),
+        memoryVal: Number(memoryState.memoryVal) - Number(temp.firstOperand),
         hasMemoryVal: true,
         displayMemoryVal: memoryState.displayMemoryVal,
       });
     }
-  }
-  console.log(temp, operationTemp, terminationTemp, calculationState);
+  };
+  console.log(
+    temp,
+    operationTemp,
+    terminationTemp,
+    calculationState,
+    memoryState
+  );
   return (
     <View style={styles.container}>
       <View style={styles.emptyBar}></View>
       <View style={styles.calculationString}>
-        <Text>
-          {operationTemp.haveResult == false
-            ? temp.firstOperand
-            : temp.secondOperand}
-        </Text>
+        <CalculationBar
+          text={
+            operationTemp.haveResult == false
+              ? temp.firstOperand
+              : temp.secondOperand
+          }
+        ></CalculationBar>
       </View>
       <View style={styles.greyDivRow}>
         <CustomButton
@@ -512,8 +548,17 @@ export const HomeContainer = () => {
           buttonArgOnPress={["0"]}
         ></CustomButton>
         <CustomButton
-          buttonText="/"
-          styleProp={{ touchable: "btnOrangeBg", text: "customBtnTextWhite" }}
+          buttonText="÷"
+          styleProp={{
+            touchable:
+              operationTemp.operation === "div"
+                ? "activeOperationButton"
+                : "btnOrangeBg",
+            text:
+              operationTemp.operation === "div"
+                ? "activeOperationButtonText"
+                : "customBtnTextWhite",
+          }}
           onPressHandler={operationPressHandler}
           buttonArgOnPress={["div"]}
         ></CustomButton>
@@ -527,7 +572,11 @@ export const HomeContainer = () => {
         ></CustomButton>
         <CustomButton
           buttonText="mr"
-          styleProp={memoryState.hasMemoryVal ? { touchable: "btnActiveMr", text: "customBtnTextActiveMr" } : { touchable: "btnGreyBg", text: "customBtnTextWhite" }}
+          styleProp={
+            memoryState.hasMemoryVal
+              ? { touchable: "btnActiveMr", text: "customBtnTextActiveMr" }
+              : { touchable: "btnGreyBg", text: "customBtnTextWhite" }
+          }
           onPressHandler={onPressMRBtn}
           buttonArgOnPress={["0"]}
         ></CustomButton>
@@ -564,8 +613,17 @@ export const HomeContainer = () => {
           buttonArgOnPress={["9"]}
         ></CustomButton>
         <CustomButton
-          buttonText="x"
-          styleProp={{ touchable: "btnOrangeBg", text: "customBtnTextWhite" }}
+          buttonText="×"
+          styleProp={{
+            touchable:
+              operationTemp.operation === "mul"
+                ? "activeOperationButton"
+                : "btnOrangeBg",
+            text:
+              operationTemp.operation === "mul"
+                ? "activeOperationButtonText"
+                : "customBtnTextWhite",
+          }}
           onPressHandler={operationPressHandler}
           buttonArgOnPress={["mul"]}
         ></CustomButton>
@@ -591,7 +649,16 @@ export const HomeContainer = () => {
         ></CustomButton>
         <CustomButton
           buttonText="-"
-          styleProp={{ touchable: "btnOrangeBg", text: "customBtnTextWhite" }}
+          styleProp={{
+            touchable:
+              operationTemp.operation === "minus"
+                ? "activeOperationButton"
+                : "btnOrangeBg",
+            text:
+              operationTemp.operation === "minus"
+                ? "activeOperationButtonText"
+                : "customBtnTextWhite",
+          }}
           onPressHandler={operationPressHandler}
           buttonArgOnPress={["minus"]}
         ></CustomButton>
@@ -617,7 +684,16 @@ export const HomeContainer = () => {
         ></CustomButton>
         <CustomButton
           buttonText="+"
-          styleProp={{ touchable: "btnOrangeBg", text: "customBtnTextWhite" }}
+          styleProp={{
+            touchable:
+              operationTemp.operation === "plus"
+                ? "activeOperationButton"
+                : "btnOrangeBg",
+            text:
+              operationTemp.operation === "plus"
+                ? "activeOperationButtonText"
+                : "customBtnTextWhite",
+          }}
           onPressHandler={operationPressHandler}
           buttonArgOnPress={["plus"]}
         ></CustomButton>
@@ -628,7 +704,7 @@ export const HomeContainer = () => {
           buttonText="0"
           styleProp={{ touchable: "btnZero", text: "customBtnZeroText" }}
           onPressHandler={onPressNumberHandler}
-          buttonArgOnPress={["0", operationTemp.operationActive, false]}
+          buttonArgOnPress={["0", operationTemp.operationActive]}
         ></CustomButton>
         <CustomButton
           style={{ flex: 1 }}
@@ -661,6 +737,9 @@ const styles = StyleSheet.create({
   calculationString: {
     flex: 1,
     backgroundColor: "red",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
   },
   greyDivRow: {
     flex: 1,

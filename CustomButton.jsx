@@ -5,7 +5,9 @@ export const CustomButton = (props) => {
   return (
     <TouchableHighlight
       style={styles[props.styleProp.touchable]}
-      onPress={() => {props.onPressHandler(...props.buttonArgOnPress)}}
+      onPress={() => {
+        props.onPressHandler(...props.buttonArgOnPress);
+      }}
       underlayColor="#c9c8c8"
     >
       <Text style={styles[props.styleProp.text]}>{props.buttonText}</Text>
@@ -53,7 +55,7 @@ const styles = StyleSheet.create({
     width: 170,
     height: 80,
   },
-  btnActiveMr:{
+  btnActiveMr: {
     backgroundColor: "#939393",
     borderRadius: 50,
     justifyContent: "center",
@@ -61,8 +63,20 @@ const styles = StyleSheet.create({
     height: 80,
     alignItems: "center",
   },
-  customBtnTextActiveMr:{
+  customBtnTextActiveMr: {
     color: "black",
+    fontSize: 40,
+  },
+  activeOperationButton: {
+    backgroundColor: "#fff",
+    borderRadius: 50,
+    justifyContent: "center",
+    width: 80,
+    height: 80,
+    alignItems: "center",
+  },
+  activeOperationButtonText: {
+    color: "#ff9a0a",
     fontSize: 40,
   },
   customBtnZeroText: {
